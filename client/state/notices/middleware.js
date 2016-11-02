@@ -19,7 +19,9 @@ import {
 	POST_RESTORE_FAILURE,
 	POST_RESTORE_SUCCESS,
 	POST_SAVE_SUCCESS,
-	SITE_FRONT_PAGE_SET_FAILURE
+	SITE_FRONT_PAGE_SET_FAILURE,
+	SITE_SETTINGS_SAVE_FAILURE,
+	SITE_SETTINGS_SAVE_SUCCESS
 } from 'state/action-types';
 
 /**
@@ -85,6 +87,18 @@ export function onPostSaveSuccess( dispatch, action ) {
 	}
 }
 
+export function onSiteSettingsSaveFailed( dispatch, action ) {
+	let text;
+	switch ( action.error.error ) {
+		case 'invalid_ip':
+			text = translate( 'One of your IP Addresses was invalid. Please, try again.' );
+			break;
+		default:
+			text = translate( 'There was a problem saving your changes. Please, try again.' );
+	}
+	dispatch( errorNotice( text ) );
+}
+
 /**
  * Handler action type mapping
  */
@@ -99,7 +113,9 @@ export const handlers = {
 	[ POST_RESTORE_SUCCESS ]: dispatchSuccess( translate( 'Post successfully restored' ) ),
 	[ POST_SAVE_SUCCESS ]: onPostSaveSuccess,
 	[ GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS ]: dispatchSuccess( translate( 'Thanks for confirming those details!' ) ),
-	[ SITE_FRONT_PAGE_SET_FAILURE ]: dispatchError( translate( 'An error occurred while setting the homepage' ) )
+	[ SITE_FRONT_PAGE_SET_FAILURE ]: dispatchError( translate( 'An error occurred while setting the homepage' ) ),
+	[ SITE_SETTINGS_SAVE_SUCCESS ]: dispatchSuccess( translate( 'Settings saved!' ) ),
+	[ SITE_SETTINGS_SAVE_FAILURE ]: onSiteSettingsSaveFailed
 };
 
 /**
