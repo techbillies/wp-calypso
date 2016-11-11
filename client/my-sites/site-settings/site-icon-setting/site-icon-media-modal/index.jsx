@@ -39,6 +39,7 @@ class SiteIconMediaModal extends Component {
 					visible={ visible }
 					siteId={ siteId }
 					onClose={ this.setSiteIcon }
+					enabledFilters={ [ 'images' ] }
 					single />
 			</MediaLibrarySelectedData>
 		);
