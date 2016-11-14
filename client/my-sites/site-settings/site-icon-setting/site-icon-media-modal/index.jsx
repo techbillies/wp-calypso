@@ -42,9 +42,7 @@ class SiteIconMediaModal extends Component {
 					placeholder={ (
 						<Dialog
 							additionalClassNames="editor-media-modal"
-							isVisible>
-							<noscript />
-						</Dialog>
+							isVisible />
 					) }
 					siteId={ siteId }
 					onClose={ this.setSiteIcon }
