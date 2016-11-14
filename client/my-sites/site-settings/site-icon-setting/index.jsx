@@ -36,14 +36,15 @@ function SiteIconSetting( { translate, siteId, isJetpack, customizerUrl, general
 	return (
 		<FormFieldset className="site-icon-setting">
 			<FormLabel>{ translate( 'Site Icon' ) }</FormLabel>
-			<div className="site-icon-setting__controls">
-				<SiteIcon size={ 64 } siteId={ siteId } />
-				<Button { ...buttonProps } className="site-icon-setting__change-button">
-					{ translate( 'Change site icon' ) }
-				</Button>
-			</div>
+			<SiteIcon size={ 64 } siteId={ siteId } />
+			<Button
+				{ ...buttonProps }
+				className="site-icon-setting__change-button"
+				compact>
+				{ translate( 'Change' ) }
+			</Button>
 			<FormSettingExplanation>
-				{ translate( 'The Site Icon is used as a browser and app icon for your site.' ) }
+				{ translate( 'A browser and app icon for your site.' ) }
 			</FormSettingExplanation>
 		</FormFieldset>
 	);
