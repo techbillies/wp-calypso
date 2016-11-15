@@ -38,11 +38,12 @@ const debug = debugFactory( 'calypso:themes:actions' ); //eslint-disable-line no
  * Returns an action object to be used in signalling that a theme object has
  * been received.
  *
- * @param  {Object} theme Theme received
- * @return {Object}      Action object
+ * @param  {Object} theme  Theme received
+ * @param  {Number} siteId ID of site for which themes have been received
+ * @return {Object}        Action object
  */
-export function receiveTheme( theme ) {
-	return receiveThemes( [ theme ] );
+export function receiveTheme( theme, siteId ) {
+	return receiveThemes( [ theme ], siteId );
 }
 
 /**
@@ -50,12 +51,14 @@ export function receiveTheme( theme ) {
  * been received.
  *
  * @param  {Array}  themes Themes received
- * @return {Object}       Action object
+ * @param  {Number} siteId ID of site for which themes have been received
+ * @return {Object}        Action object
  */
-export function receiveThemes( themes ) {
+export function receiveThemes( themes, siteId ) {
 	return {
 		type: THEMES_RECEIVE,
-		themes
+		themes,
+		siteId
 	};
 }
 
@@ -87,7 +90,7 @@ export function requestThemes( siteId, isJetpack = false, query = {} ) {
 		} );
 
 		return wpcom.undocumented().themes( siteIdToQuery, queryWithApiVersion ).then( ( { found, themes } ) => {
-			dispatch( receiveThemes( themes ) );
+			dispatch( receiveThemes( themes, siteIdToStore ) );
 			dispatch( {
 				type: THEMES_REQUEST_SUCCESS,
 				siteId: siteIdToStore,
