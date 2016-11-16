@@ -6,7 +6,8 @@ import { expect } from 'chai';
 import {
 	isActivatingModule,
 	isDeactivatingModule,
-	isModuleActive
+	isModuleActive,
+	isFetchingModuleList
 } from '../selectors';
 
 import {
@@ -135,6 +136,21 @@ describe( 'selectors', () => {
 				siteId = 123456;
 			const output = isModuleActive( stateIn, siteId, 'module-z' );
 			expect( output ).to.be.null;
+		} );
+	} );
+
+	describe( '#isFetchingModuleList', () => {
+		it( 'should return true if the list of modules is being fetched', () => {
+			const stateIn = {
+					jetpackSettings: {
+						jetpackModules: {
+							requests: REQUESTS_FIXTURE
+						}
+					}
+				},
+				siteId = 123456;
+			const output = isFetchingModuleList( stateIn, siteId );
+			expect( output ).to.be.true;
 		} );
 	} );
 } );

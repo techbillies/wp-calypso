@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import keyBy from 'lodash/keyBy';
+
+/**
  * Internal dependencies
  */
 import {
@@ -7,7 +12,10 @@ import {
 	JETPACK_MODULE_ACTIVATE_SUCCESS,
 	JETPACK_MODULE_DEACTIVATE,
 	JETPACK_MODULE_DEACTIVATE_FAILURE,
-	JETPACK_MODULE_DEACTIVATE_SUCCESS
+	JETPACK_MODULE_DEACTIVATE_SUCCESS,
+	JETPACK_MODULE_LIST_REQUEST,
+	JETPACK_MODULE_LIST_REQUEST_FAILURE,
+	JETPACK_MODULE_LIST_REQUEST_SUCCESS
 } from 'state/action-types';
 import wp from 'lib/wp';
 
@@ -57,6 +65,31 @@ export const deactivateModule = ( siteId, moduleSlug ) => {
 					type: JETPACK_MODULE_DEACTIVATE_FAILURE,
 					siteId,
 					moduleSlug,
+					error: error.message
+				} );
+			} );
+	};
+};
+
+export const fetchModuleList = ( siteId ) => {
+	return ( dispatch ) => {
+		dispatch( {
+			type: JETPACK_MODULE_LIST_REQUEST,
+			siteId
+		} );
+
+		return wp.undocumented().jetpackModules( siteId )
+			.then( ( data ) => {
+				const modules = keyBy( data.modules, 'id' );
+				dispatch( {
+					type: JETPACK_MODULE_LIST_REQUEST_SUCCESS,
+					siteId,
+					modules
+				} );
+			} ).catch( error => {
+				dispatch( {
+					type: JETPACK_MODULE_LIST_REQUEST_FAILURE,
+					siteId,
 					error: error.message
 				} );
 			} );

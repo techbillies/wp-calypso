@@ -13,7 +13,10 @@ import {
 	JETPACK_MODULE_ACTIVATE_SUCCESS,
 	JETPACK_MODULE_DEACTIVATE,
 	JETPACK_MODULE_DEACTIVATE_FAILURE,
-	JETPACK_MODULE_DEACTIVATE_SUCCESS
+	JETPACK_MODULE_DEACTIVATE_SUCCESS,
+	JETPACK_MODULE_LIST_REQUEST,
+	JETPACK_MODULE_LIST_REQUEST_FAILURE,
+	JETPACK_MODULE_LIST_REQUEST_SUCCESS
 } from 'state/action-types';
 import { createReducer } from 'state/utils';
 
@@ -29,12 +32,28 @@ const createItemsReducer = ( active ) => {
 	};
 };
 
+const createItemsListReducer = () => {
+	return ( state, { siteId, modules } ) => {
+		return merge( {}, state, {
+			[ siteId ]: modules
+		} );
+	};
+};
+
 const createRequestsReducer = ( data ) => {
 	return ( state, { siteId, moduleSlug } ) => {
 		return merge( {}, state, {
 			[ siteId ]: {
 				[ moduleSlug ]: data
 			}
+		} );
+	};
+};
+
+const createModuleListRequestReducer = ( data ) => {
+	return ( state, { siteId } ) => {
+		return merge( {}, state, {
+			[ siteId ]: data
 		} );
 	};
 };
@@ -50,6 +69,7 @@ const createRequestsReducer = ( data ) => {
 export const items = createReducer( {}, {
 	[ JETPACK_MODULE_ACTIVATE_SUCCESS ]: createItemsReducer( true ),
 	[ JETPACK_MODULE_DEACTIVATE_SUCCESS ]: createItemsReducer( false ),
+	[ JETPACK_MODULE_LIST_REQUEST_SUCCESS ]: createItemsListReducer()
 } );
 
 /**
@@ -67,6 +87,9 @@ export const requests = createReducer( {}, {
 	[ JETPACK_MODULE_DEACTIVATE ]: createRequestsReducer( { deactivating: true } ),
 	[ JETPACK_MODULE_DEACTIVATE_FAILURE ]: createRequestsReducer( { deactivating: false } ),
 	[ JETPACK_MODULE_DEACTIVATE_SUCCESS ]: createRequestsReducer( { deactivating: false } ),
+	[ JETPACK_MODULE_LIST_REQUEST ]: createModuleListRequestReducer( { isFetchingModuleList: true } ),
+	[ JETPACK_MODULE_LIST_REQUEST_FAILURE ]: createModuleListRequestReducer( { isFetchingModuleList: false } ),
+	[ JETPACK_MODULE_LIST_REQUEST_SUCCESS ]: createModuleListRequestReducer( { isFetchingModuleList: false } )
 } );
 
 export const reducer = combineReducers( {
