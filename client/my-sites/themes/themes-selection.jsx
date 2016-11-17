@@ -17,7 +17,9 @@ import buildUrl from 'lib/mixins/url-search/build-url';
 import { getSiteSlug } from 'state/sites/selectors';
 import { isActiveTheme } from 'state/themes/current-theme/selectors';
 import {
-	getThemesForQuery,
+	getThemesForQueryIgnoringPage,
+	isRequestingThemesForQuery,
+	isRequestingThemesForQueryIgnoringPage,
 	isThemesLastPageForQuery,
 	isThemePurchased
 } from 'state/themes/selectors';
@@ -121,12 +123,8 @@ const ThemesSelection = React.createClass( {
 		this.props.onScreenshotClick && this.props.onScreenshotClick( theme );
 	},
 
-//	fetchNextPage() {
-		//this.setState( { page: this.state.page + 1 } );
-//	},
-
 	fetchNextPage( options ) {
-		if ( this.props.lastPage ) {
+		if ( this.props.isRequesting || /* this.props.isRequestingIgnoringQuery || */ this.props.isLastPage ) {
 			return;
 		}
 
@@ -134,9 +132,7 @@ const ThemesSelection = React.createClass( {
 			this.trackScrollPage();
 		}
 
-		//this.setState( { page: this.state.page + 1 } );
-		//this.queryThemes( this.props );
-		//this.props.incrementPage();
+		this.props.incrementPage();
 	},
 
 	render() {
@@ -173,7 +169,9 @@ const ThemesSelection = React.createClass( {
 export default connect(
 	( state, { query, siteId } ) => ( {
 		siteSlug: getSiteSlug( state, siteId ),
-		themes: getThemesForQuery( state, siteId || 'wpcom', query ) || [],
+		themes: getThemesForQueryIgnoringPage( state, siteId || 'wpcom', query ) || [],
+		isRequesting: isRequestingThemesForQuery( state, siteId || 'wpcom', query ),
+		isRequestingIgnoringQuery: isRequestingThemesForQueryIgnoringPage( state, siteId || 'wpcom', query ),
 		isLastPage: isThemesLastPageForQuery( state, siteId || 'wpcom', query ),
 		isActiveTheme: themeId => isActiveTheme( state, themeId, siteId ),
 		// Note: This component assumes that purchase data is already present in the state tree
