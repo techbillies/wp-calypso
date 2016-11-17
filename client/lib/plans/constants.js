@@ -180,7 +180,7 @@ export const PLANS_LIST = {
 			FEATURE_VIDEO_UPLOADS,
 			FEATURE_LIVE_COURSES,
 			isEnabled( 'manage/advanced-seo' ) && FEATURE_ADVANCED_SEO,
-			FEATURE_UPLOAD_PLUGINS,
+			isEnabled( 'automated-transfer' ) && FEATURE_UPLOAD_PLUGINS,
 			FEATURE_GOOGLE_ANALYTICS,
 			FEATURE_NO_BRANDING
 		] ),
