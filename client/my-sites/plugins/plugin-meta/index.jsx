@@ -132,16 +132,12 @@ export default React.createClass( {
 	},
 
 	getInstallButton() {
-		if ( this.props.selectedSite && this.props.selectedSite.jetpack ) {
-			if ( this.hasOrgInstallButton() ) {
-				return <PluginInstallButton { ...this.props } />;
-			}
+		if ( this.props.selectedSite && this.props.selectedSite.jetpack && this.hasOrgInstallButton() ) {
+			return <PluginInstallButton { ...this.props } />;
 		}
 
 		if ( this.props.selectedSite && ! this.props.selectedSite.jetpack ) {
-			return <WpcomPluginInstallButton
-				disabled={ ! this.hasBusinessPlan() }
-			/>;
+			return <WpcomPluginInstallButton disabled={ ! this.hasBusinessPlan() } />;
 		}
 	},
 

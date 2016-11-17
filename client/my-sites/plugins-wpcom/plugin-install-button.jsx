@@ -2,12 +2,12 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
-import { localize } from 'i18n-calypso';
 
 export const WpcomPluginInstallButton = ( { translate, disabled } ) => {
 	return <Button
