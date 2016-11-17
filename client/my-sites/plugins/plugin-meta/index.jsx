@@ -300,7 +300,7 @@ export default React.createClass( {
 
 		return (
 			<div className="plugin-meta">
-				<Card>
+				<Card style={ { margin: 0 } }>
 					{ this.displayBanner() }
 					<div className={ cardClasses } >
 						<div className="plugin-meta__detail">
@@ -324,8 +324,13 @@ export default React.createClass( {
 					}
 				</Card>
 
+				{ ( this.props.selectedSite.jetpack || this.hasBusinessPlan() ) &&
+					<div style={ { marginBottom: 16 } } />
+				}
+
 				{ ! this.props.selectedSite.jetpack && ! this.hasBusinessPlan() &&
 					<UpgradeNudge
+						className="plugin-meta__upgrade_nudge"
 						feature={ FEATURE_UPLOAD_PLUGINS }
 						title={ this.translate( 'Upgrade to the Business plan to install plugins.' ) }
 						message={ this.translate( 'Upgrade to the Business plan to install plugins.' ) }
