@@ -39,6 +39,10 @@ module.exports = React.createClass( {
 	},
 
 	getFilteredSections: function() {
+		if ( this.props.isWpcom ) {
+			return this.getWpcomFilteredSections();
+		}
+		
 		return [
 			{
 				key: 'description',
@@ -71,6 +75,18 @@ module.exports = React.createClass( {
 			{
 				key: 'other_notes',
 				title: this.translate( 'Other Notes', {
+					context: 'Navigation item',
+					textOnly: true
+				} )
+			}
+		];
+	},
+
+	getWpcomFilteredSections: function() {
+		return [
+			{
+				key: 'description',
+				title: this.translate( 'Description', {
 					context: 'Navigation item',
 					textOnly: true
 				} )
