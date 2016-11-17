@@ -454,7 +454,6 @@ describe( 'themes selectors', () => {
 		it( 'should return null if the query is not tracked', () => {
 			const themes = getThemesForQueryIgnoringPage( {
 				themes: {
-					items: {},
 					queries: {}
 				}
 			}, 2916284, { search: '', number: 1 } );
@@ -465,7 +464,6 @@ describe( 'themes selectors', () => {
 		it( 'should return null if the query manager has not received items for query', () => {
 			const themes = getThemesForQueryIgnoringPage( {
 				themes: {
-					items: {},
 					queries: {
 						2916284: new ThemeQueryManager( {
 							items: {},
@@ -481,10 +479,6 @@ describe( 'themes selectors', () => {
 		it( 'should return a concatenated array of all site themes ignoring page', () => {
 			const themes = getThemesForQueryIgnoringPage( {
 				themes: {
-					items: {
-						twentyfifteen,
-						twentysixteen,
-					},
 					queries: {
 						2916284: new ThemeQueryManager( {
 							items: {
@@ -510,9 +504,6 @@ describe( 'themes selectors', () => {
 		it( 'should omit found items for which the requested result hasn\'t been received', () => {
 			const themes = getThemesForQueryIgnoringPage( {
 				themes: {
-					items: {
-						twentysixteen
-					},
 					queries: {
 						2916284: new ThemeQueryManager( {
 							items: {
