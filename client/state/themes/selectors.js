@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { includes, some, split } from 'lodash';
+import { includes, isEqual, omit, some, split } from 'lodash';
 import createSelector from 'lib/create-selector';
 
 /**
@@ -13,7 +13,12 @@ import config from 'config';
 import { getSiteSlug, getSiteOption, isJetpackSite } from 'state/sites/selectors';
 import { getSitePurchases } from 'state/purchases/selectors';
 import { isPremiumTheme, oldShowcaseUrl } from './utils';
-import { getSerializedThemesQuery } from './utils';
+import {
+	getDeserializedThemesQueryDetails,
+	getNormalizedThemesQuery,
+	getSerializedThemesQuery,
+	getSerializedThemesQueryWithoutPage
+ } from './utils';
 import { DEFAULT_THEME_QUERY } from './constants';
 
 /**
@@ -161,6 +166,65 @@ export function isThemesLastPageForQuery( state, siteId, query = {} ) {
 
 	return lastPage === ( query.page || DEFAULT_THEME_QUERY.page );
 }
+
+/**
+ * Returns an array of normalized themes for the themes query, including all
+ * known queried pages, or null if the themes for the query are not known.
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Number}  siteId Site ID
+ * @param  {Object}  query  Post query object
+ * @return {?Array}         Themes for the post query
+ */
+export const getThemesForQueryIgnoringPage = createSelector(
+	( state, siteId, query ) => {
+		const themes = state.themes.queries[ siteId ];
+		if ( ! themes ) {
+			return null;
+		}
+
+		const itemsIgnoringPage = themes.getItemsIgnoringPage( query );
+		if ( ! itemsIgnoringPage ) {
+			return null;
+		}
+
+		return itemsIgnoringPage;
+	},
+	( state ) => state.themes.queries,
+	( state, siteId, query ) => getSerializedThemesQueryWithoutPage( query, siteId )
+);
+
+/**
+ * Returns true if currently requesting themes for the themes query, regardless
+ * of page, or false otherwise.
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Number}  siteId Site ID
+ * @param  {Object}  query  Post query object
+ * @return {Boolean}        Whether themes are being requested
+ */
+export const isRequestingThemesForQueryIgnoringPage = createSelector(
+	( state, siteId, query ) => {
+		const normalizedQueryWithoutPage = omit( getNormalizedThemesQuery( query ), 'page' );
+		return some( state.themes.queryRequests, ( isRequesting, serializedQuery ) => {
+			if ( ! isRequesting ) {
+				return false;
+			}
+
+			const queryDetails = getDeserializedThemesQueryDetails( serializedQuery );
+			if ( queryDetails.siteId !== siteId ) {
+				return false;
+			}
+
+			return isEqual(
+				normalizedQueryWithoutPage,
+				omit( queryDetails.query, 'page' )
+			);
+		} );
+	},
+	( state ) => state.themes.queryRequests,
+	( state, siteId, query ) => getSerializedThemesQuery( query, siteId )
+);
 
 /**
  * Returns true if a request is in progress for the specified site theme, or

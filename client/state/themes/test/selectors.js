@@ -15,6 +15,8 @@ import {
 	getThemesFoundForQuery,
 	getThemesLastPageForQuery,
 	isThemesLastPageForQuery,
+	getThemesForQueryIgnoringPage,
+	isRequestingThemesForQueryIgnoringPage,
 	getThemeDetailsUrl,
 	getThemeSupportUrl,
 	getThemeHelpUrl,
@@ -63,6 +65,8 @@ describe( 'themes selectors', () => {
 		getThemes.memoizedSelector.cache.clear();
 		getTheme.memoizedSelector.cache.clear();
 		getThemesForQuery.memoizedSelector.cache.clear();
+		getThemesForQueryIgnoringPage.memoizedSelector.cache.clear();
+		isRequestingThemesForQueryIgnoringPage.memoizedSelector.cache.clear();
 	} );
 
 	describe( '#getThemes()', () => {
@@ -443,6 +447,127 @@ describe( 'themes selectors', () => {
 			}, 2916284, { search: 'Sixteen', number: 1 } );
 
 			expect( isLastPage ).to.be.true;
+		} );
+	} );
+
+	( '#getThemesForQueryIgnoringPage()', () => {
+		it( 'should return null if the query is not tracked', () => {
+			const themes = getThemesForQueryIgnoringPage( {
+				themes: {
+					items: {},
+					queries: {}
+				}
+			}, 2916284, { search: '', number: 1 } );
+
+			expect( themes ).to.be.null;
+		} );
+
+		it( 'should return null if the query manager has not received items for query', () => {
+			const themes = getThemesForQueryIgnoringPage( {
+				themes: {
+					items: {},
+					queries: {
+						2916284: new ThemeQueryManager( {
+							items: {},
+							queries: {}
+						} )
+					}
+				}
+			}, 2916284, { search: '', number: 1 } );
+
+			expect( themes ).to.be.null;
+		} );
+
+		it( 'should return a concatenated array of all site themes ignoring page', () => {
+			const themes = getThemesForQueryIgnoringPage( {
+				themes: {
+					items: {
+						twentyfifteen,
+						twentysixteen,
+					},
+					queries: {
+						2916284: new ThemeQueryManager( {
+							items: {
+								twentyfifteen,
+								twentysixteen
+							},
+							queries: {
+								'[]': {
+									itemKeys: [ 'twentyfifteen', 'twentysixteen' ]
+								}
+							}
+						} )
+					}
+				}
+			}, 2916284, { search: '', number: 1 } );
+
+			expect( themes ).to.eql( [
+				twentyfifteen,
+				twentysixteen
+			] );
+		} );
+
+		it( 'should omit found items for which the requested result hasn\'t been received', () => {
+			const themes = getThemesForQueryIgnoringPage( {
+				themes: {
+					items: {
+						twentysixteen
+					},
+					queries: {
+						2916284: new ThemeQueryManager( {
+							items: {
+								twentysixteen
+							},
+							queries: {
+								'[["search","Sixteen"]]': {
+									itemKeys: [ 'twentysixteen', undefined ],
+									found: 2
+								}
+							}
+						} )
+					}
+				}
+			}, 2916284, { search: 'Sixteen', number: 1 } );
+
+			expect( themes ).to.eql( [
+				twentysixteen
+			] );
+		} );
+	} );
+
+	describe( 'isRequestingThemesForQueryIgnoringPage()', () => {
+		it( 'should return false if not requesting for query', () => {
+			const isRequesting = isRequestingThemesForQueryIgnoringPage( {
+				themes: {
+					queryRequests: {}
+				}
+			}, 2916284, { search: 'twen' } );
+
+			expect( isRequesting ).to.be.false;
+		} );
+
+		it( 'should return true requesting for query at exact page', () => {
+			const isRequesting = isRequestingThemesForQueryIgnoringPage( {
+				themes: {
+					queryRequests: {
+						'2916284:{"search":"twen","page":4}': true
+					}
+				}
+			}, 2916284, { search: 'twen', page: 4 } );
+
+			expect( isRequesting ).to.be.true;
+		} );
+
+		it( 'should return true requesting for query without page specified', () => {
+			const isRequesting = isRequestingThemesForQueryIgnoringPage( {
+				themes: {
+					queryRequests: {
+						'2916284:{"search":"twen","page":4}': true
+					}
+				}
+			}, 2916284, { search: 'twen' } );
+
+			expect( isRequesting ).to.be.true;
 		} );
 	} );
 
