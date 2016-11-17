@@ -82,17 +82,14 @@ module.exports = React.createClass( {
 		];
 	},
 
-	getWpcomFilteredSections: function() {
-		return [
-			{
-				key: 'description',
-				title: this.translate( 'Description', {
-					context: 'Navigation item',
-					textOnly: true
-				} )
-			}
-		];
-	},
+	getWpcomFilteredSections: () => [ {
+		key: 'description',
+		title: this.translate( 'Description', {
+			context: 'noun',
+			comment: 'Navigation item',
+			textOnly: true,
+		} ),
+	} ],
 
 	getInitialState: function() {
 		return {
