@@ -58,14 +58,16 @@ class TaxonomyManagerListItem extends Component {
 		return (
 			<div>
 				<span className="taxonomy-manager__label">{ name }</span>
-				<Gridicon
-					icon="ellipsis"
-					className={ classNames( {
-						'taxonomy-manager__list-item-toggle': true,
-						'is-active': this.state.popoverMenuOpen
-					} ) }
-					onClick={ this.togglePopoverMenu }
-					ref="popoverMenuButton" />
+				<span className="taxonomy-manager__action-wrapper" onClick={ this.togglePopoverMenu }>
+					<Gridicon
+						icon="ellipsis"
+						className={ classNames( {
+							'taxonomy-manager__list-item-toggle': true,
+							'is-active': this.state.popoverMenuOpen
+						} ) }
+						onClick={ this.togglePopoverMenu }
+						ref="popoverMenuButton" />
+				</span>
 				<PopoverMenu
 					isVisible={ this.state.popoverMenuOpen }
 					onClose={ this.togglePopoverMenu }
